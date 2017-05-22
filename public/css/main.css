@@ -1,0 +1,81 @@
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { 
+        background: #e0e0e0;
+        font: 13px Helvetica, Arial; 
+        font-family: Raleway;
+      }
+      form { 
+        padding: 3px; 
+        bottom: 0; 
+        width: 100%; 
+      }
+      form input { 
+        border: 1px solid black; 
+        border-radius: 5px;
+        padding: 10px; 
+        width: 40%; 
+        margin-right: .5%; 
+      }
+      form button { 
+        width: 15%; 
+        background: rgb(130, 224, 255); 
+        border: none; 
+        border-radius: 5px;
+        padding: 10px; 
+      }
+      #messages { 
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        list-style-type: none; 
+        margin: 0px 0 20px 0; 
+        padding: 10px; 
+      }
+      #messages li { 
+        border-radius: 5px;
+        padding: 15px 10px;
+        position: relative;
+        margin: 10px;
+        overflow: hidden;
+        width: 150px;
+      }
+      #messages li:nth-child(odd) { 
+        background: #e53935; 
+        color: #eeeeee;
+        font-weight: bold;
+      }
+      
+      #stocks {
+        
+        border-radius: 5px;
+        padding: 30px 0;
+      }
+      
+      #messages li:nth-child(even) {
+        background: #af4448;
+        color: #fff;
+        font-weight: bold;
+      }
+      
+      .panel-heading {
+        background: #af4448 !important;
+        color: #fff !important;
+      }
+      
+      .add-stock {
+        margin: auto;
+        max-width: 480px !important;
+      }
+      
+      .remove {
+        cursor: pointer;
+        position: absolute;
+        top: 5px;
+        right: 5px;
+      }
+      
+      .symbol {
+        font-size: 15px;
+        font-weight:bold;
+      }
