@@ -13,7 +13,8 @@ $(document).ready(function () {
     $.each(data, function(index, obj) {
         var sym = obj.stockSymbol;
         var name = obj.companyName;
-        stockList.push(sym);
+        // stockList.push(sym);
+        seriesOptions.push({name: sym, data: []});
         createStockElementUI(sym, name);
     });
     var markit = new Markit.InteractiveChartApi(stockList, 365);
@@ -49,7 +50,8 @@ $(document).ready(function () {
    ***********************************************************/
    
   socket.on('add stock', function(msg){
-    stockList.push(msg.stockSymbol);
+    console.log("socket add stock");
+    seriesOptions.push({name: msg.stockSymbol, data: []});
     createStockElementUI(msg.stockSymbol, msg.companyName);
     var markit = new Markit.InteractiveChartApi(stockList, 365);
     
@@ -58,18 +60,22 @@ $(document).ready(function () {
   
   socket.on('remove stock', function(msg){
     // remove the stock from the seriesOptions global
-    var ind = -1;
-    for (var j=0; j< seriesOptions.length; j++) {
-        if (seriesOptions[j].name === msg.stockSymbol) {
-            ind = j;
-            return;
+    if (!clickedRemove) {
+        var ind = -1;
+        for (var j=0; j< seriesOptions.length; j++) {
+            if (seriesOptions[j].name === msg.stockSymbol) {
+                ind = j;
+                break;
+            }
         }
+        
+        seriesOptions.splice(ind, 1);
+        deleteStockFromUI(msg.stockSymbol);
+        console.log("socket remove stock");
+        var markit = new Markit.InteractiveChartApi(stockList, 365);
+    } else  {
+        clickedRemove = false;  
     }
-    
-    seriesOptions.splice(ind, 1);
-    deleteStockFromUI(msg.stockSymbol);
-    var markit = new Markit.InteractiveChartApi(stockList, 365);
-    
     
   });
   

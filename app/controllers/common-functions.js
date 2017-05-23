@@ -1,6 +1,7 @@
 'use strict';
 
 var stockList = [];
+var clickedRemove = false;
 
 function addStock(stockSymbol, companyName, buildChart) {
     var upper = stockSymbol.toUpperCase();
@@ -14,7 +15,7 @@ function addStock(stockSymbol, companyName, buildChart) {
         },
         success: function(result) {
             if (result.status === "Success") {
-                stockList.push(upper);
+                seriesOptions.push({name: upper, data: []});
                 createStockElementUI(upper, companyName);
                 var markit = new Markit.InteractiveChartApi(stockList, 365);
             }
@@ -30,12 +31,6 @@ function removeStock(stockSymbol) {
         type: "DELETE",
         success: function(result) {
             if (result.status === "Success") {
-                // remove stock from global array
-                var index = stockList.indexOf(upper);
-                if (index !== -1) {
-                    var removed = stockList.splice(index, 1);
-                }
-                
                 // remove the stock from the seriesOptions global
                 var ind = -1;
                 for (var j=0; j< seriesOptions.length; j++) {
@@ -78,6 +73,7 @@ function createStockElementUI(symbol, name) {
 function clickRemove() {
     var socket = io();
     var symbol = this.parentNode.firstChild.innerHTML;
+    clickedRemove = true;
     removeStock(symbol);
     socket.emit('remove stock', symbol);
 }

@@ -4,6 +4,7 @@
 var Markit = {};
 var seriesOptions = [];
 var seriesCounter = 0;
+
 /**
  * Define the InteractiveChartApi.
  * First argument is symbol (string) for the quote. Examples: AAPL, MSFT, JNJ, GOOG.
@@ -15,57 +16,59 @@ Markit.InteractiveChartApi = function(symbols,duration){
 };
 
 Markit.InteractiveChartApi.prototype.PlotChart = function(symbols){
-    for (var i=0; i<symbols.length; i++) {
-        this.symbol = symbols[i];
-        var stock="";
-        var params = {
-            parameters: JSON.stringify( this.getInputParams() )
-        }
-        
-        var foundStock = false;
-        for (var j=0; j<seriesOptions.length; j++) {
-            if (seriesOptions[j].name === this.symbol) {
-                foundStock = true;
-            }
-        }
+    var counter = 0;
+    seriesCounter = 0;
     
-        //Make JSON request for timeseries data
-        if (!foundStock) {
-            $.ajax({
-                beforeSend:function(){
-                    $("#chartDemoContainer").text("Loading chart...");
-                },
-                data: params,
-                url: "http://dev.markitondemand.com/Api/v2/InteractiveChart/jsonp",
-                dataType: "jsonp",
-                context: this,
-                success: function(json){
-                    //Catch errors
-                    if (!json || json.Message){
-                        console.error("Error: ", json.Message);
-                        $("#chartDemoContainer").text("An error occured loading the chart.");
-                        return;
-                    }
-                    var ohlc = this._getOHLC(json);
-                    
-                    seriesOptions.push({
-                        name: json.Elements[0].Symbol,
-                        data: ohlc
-                    });
-                    
-                    seriesCounter++;
-                    if (seriesCounter === symbols.length) {
-                        //console.log(`SERIES OPTIONS: ${JSON.stringify(seriesOptions)}`);
-                        this.render(json);
-                    }
-                },
-                error: function(response,txtStatus){
-                    console.log(response,txtStatus)
-                }
-            });
-        } else {
-            this.render({});
+    for (let k=0; k<seriesOptions.length; k++) {
+        if (seriesOptions[k].data.length === 0) {
+            counter++;
         }
+    }
+    
+    if (counter > 0) {
+        for (let i=0; i<seriesOptions.length; i++) {
+           if (seriesOptions[i].data.length===0) {
+               
+                this.symbol = seriesOptions[i].name;
+                var params = {
+                    parameters: JSON.stringify( this.getInputParams() )
+                }
+            
+                //Make JSON request for timeseries data
+                $.ajax({
+                    beforeSend:function(){
+                        $("#chartDemoContainer").text("Loading chart...");
+                    },
+                    data: params,
+                    url: "http://dev.markitondemand.com/Api/v2/InteractiveChart/jsonp",
+                    dataType: "jsonp",
+                    context: this,
+                    success: function(json){
+                        //Catch errors
+                        if (!json || json.Message){
+                            console.error("Error: ", json.Message);
+                            $("#chartDemoContainer").text("An error occured loading the chart.");
+                            return;
+                        }
+                        var ohlc = this._getOHLC(json);
+                        
+                        seriesOptions[i].data = ohlc;
+        
+                        seriesCounter++;
+        
+                        if (seriesCounter === counter) {
+                            this.render(json);
+                        }
+                    },
+                    error: function(response,txtStatus){
+                        console.log(response,txtStatus)
+                    }
+                });
+            } 
+        }
+    } else {
+        console.log(`seriesOptions: {seriesOptions}`);
+        this.render({});
     }
 };
 

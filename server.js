@@ -7,12 +7,14 @@ var io = require('socket.io')(server);
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 
+require('dotenv').config();
+
 app.use("/public", express.static(process.cwd() + "/public/"));
 app.use("/controllers", express.static(process.cwd() + "/app/controllers/"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://localhost:27017/stocks');
+mongoose.connect(process.env.MONGO_URI);
 
 var StockHandler = require('./app/controllers/stockHandler.server.js');
 
